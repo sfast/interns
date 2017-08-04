@@ -1,125 +1,51 @@
 window.onload = function () {
-	var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'game', { preload:preload, create:create });
+	var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'game', { preload: preload, create: create, update: update });
 
 	function preload() {
-		game.load.image('background', 'assets/images/background.png');
+		game.load.image('background', './assets/images/background.jpg');
+		game.load.image('scratch', './assets/images/scratch.jpg');
+		game.load.spritesheet('dice', './assets/images/dice.png', 258, 258, 6);
+		game.load.image('yellow', './assets/images/yellow.png');
+		game.load.image('clear', './assets/images/clear.png');
 	};
 
-	var background;
-	var poly;
-	var graphics;
-	var points = [
-		{ x: 300, y: 250 },
-		{ x: 400, y: 250 },
-		{ x: 400, y: 200 },
-		{ x: 500, y: 275 },
-		{ x: 400, y: 350 },
-		{ x: 400, y: 300 },
-		{ x: 300, y: 300 },
-		{ x: 300, y: 250 }
-	];
-	var g = [];
-	var p = [];
-	var step = 1;
-	dMax = 25;
-	dMin = 10;
-	var speed = 100;
-	
+	var background, scratch, dice1, dice2, dice3, clear;
 
 	function create() {
-		background = game.add.tileSprite(0, 0, 800, 600, 'background');
-
-		poly = new Phaser.Polygon( points );
-		graphics = game.add.graphics(0, 0);
-		graphics.beginFill(0xffffff);
-		graphics.lineStyle(3, 0xffffff);
-		graphics.drawPolygon(poly);
-		graphics.endFill();
-		g[0] = graphics;
-		p[0] = poly;
-
-		for (var i = 1; i <= 4; i++) {
-			if (i%2 === 0) {
-				var d = dMin;
-			} else {
-				var d = dMax;
-			}
-			points[0].x -= d;
-			points[0].y -= d;
-			points[1].x -= d;
-			points[1].y -= d;
-			points[7].x -= d;
-			points[7].y -= d;
-			points[2].x -= d;
-			points[2].y -= d*2;
-			points[3].x += d+(d/4);
-			points[4].x -= d;
-			points[4].y += d*2;
-			points[5].x -= d;
-			points[5].y += d;
-			points[6].x -= d;
-			points[6].y += d;
-			poly = new Phaser.Polygon( points );
-			graphics = game.add.graphics(0, 0);
-			if (i === 2) {
-				graphics.lineStyle(3, 0x4CAF50);
-			} else {
-				graphics.lineStyle(3, 0xe91e63);
-			}
-			graphics.drawPolygon(poly);
-			graphics.endFill();
-			g[i] = graphics;
-			p[i] = poly;
-		}
-		console.log(g);
-		console.log(p);
-		g[0].clear();
-		setInterval(draw, speed);
+		background = game.add.tileSprite(0, 0, 2500, 1920, 'background');
+		background.scale.x = 800/2500;
+		background.scale.y = 600/1920;
+		scratch = game.add.sprite(100, 300, 'scratch');
+		scratch.height = 600/scratch.width*scratch.height;
+		scratch.width = 600;
+		var graphics = game.add.graphics(100, 100);
+		graphics.beginFill(0x238991);
+		graphics.lineStyle(2, 0x238991, 1);
+		graphics.drawRoundedRect(217, 291, 365, 128, 9);
+		dice1 = game.add.sprite(335, 405, 'dice', Math.floor(Math.random() * 6) + 1);
+		dice2 = game.add.sprite(450, 405, 'dice', Math.floor(Math.random() * 6) + 1);
+		dice3 = game.add.sprite(565, 405, 'dice', Math.floor(Math.random() * 6) + 1);
+		dice1.width = 100;
+		dice1.height = 100;
+		dice2.width = 100;
+		dice2.height = 100;
+		dice3.width = 100;
+		dice3.height = 100;
+		game.land = game.add.bitmapData(367, 130);
+		image = new Image();
+		image.src = './assets/images/yellow.png';
+		clear = new Image();
+		clear.src = './assets/images/clear.png';
+		game.land.context.drawImage(image, 0, 0, 367, 130);
+		game.land.addToWorld(316, 390);
 	};
 
-	function draw() {
-		if (step === 1) {
-			g[4].clear();
-			step = 2;
-		} else if (step === 2) {
-			g[3].clear();
-			step = 3;
-		} else if (step === 3) {
-			g[2].clear();
-			step = 4;
-		} else if (step === 4) {
-			g[1].clear();
-			step = 5;
-			g[0].beginFill(0xffffff);
-			g[0].lineStyle(3, 0xffffff);
-			g[0].drawPolygon(p[0]);
-			g[0].endFill();
-		} else if (step === 5) {
-			g[0].clear();
-			d(p[1], g[1], 1);
-			step = 6;
-		} else if (step === 6) {
-			d(p[2], g[2], 2);
-			step = 7;
-		} else if (step === 7) {
-			d(p[3], g[3], 3);
-			step = 8;
-		} else if (step === 8) {
-			d(p[4], g[4], 4);
-			step = 1;
+	function update() {
+		if (game.input.activePointer.isDown) {
+			game.land.blendDestinationOut();
+			game.land.context.drawImage(clear, game.input.x-316-40, game.input.y-390-25);
+			game.land.blendReset();
+			game.land.dirty = true;
 		}
 	};
-
-	function d(pp, gg, k) {
-		gg = game.add.graphics(0, 0);
-		if (step == 6) {
-			gg.lineStyle(3, 0x4CAF50);
-		} else {
-			gg.lineStyle(3, 0xe91e63);
-		}
-		gg.drawPolygon(pp);
-		gg.endFill();
-		g[k] = gg;
-		p[k] = pp;
-	}
 }

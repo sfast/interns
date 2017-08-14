@@ -1,31 +1,30 @@
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
 var imageId = [];
-var number = [];
-var prize;
+var prize = [];
 var wedgeSprite = [];;
 var wedgeGroup;
 var startAngle = 0;
 var i,c=-1;
 var text =[];
-var example = 	[{amount:3, color:"yellow"},
-				{amount:200, color:"red"},
-				{amount:300, color:"red"},
-				{amount:5, color:"yellow"},
-				{amount:500, color:"red"},
-				{amount:600, color:"red"},
-				{amount:10, color:"yellow"},
-				{amount:800, color:"red"},
-				{amount:100, color:"red"},
-				{amount:25, color:"yellow"},
-				{amount:400, color:"red"},
-				{amount:700, color:"red"}];
+var example = 	[{amount:3, type:"yellow"},
+				{amount:200, type:"red"},
+				{amount:300, type:"red"},
+				{amount:5, type:"yellow"},
+				{amount:500, type:"red"},
+				{amount:600, type:"red"},
+				{amount:10, type:"yellow"},
+				{amount:800, type:"red"},
+				{amount:100, type:"red"},
+				{amount:25, type:"yellow"},
+				{amount:400, type:"red"},
+				{amount:700, type:"red"}];
 				
 class Wheel{
 	constructor(arg){
-		imageId[0]="wedge_"+arg[0].color;
+		imageId[0]="wedge_"+arg[0].type;
 		for(var j = 11; j >= 0; j--){
-			imageId[12-j]="wedge_"+arg[j].color;
-			number[j]=arg[j].amount;
+			imageId[12-j]="wedge_"+arg[j].type;
+			prize[j]=arg[j].amount;
 		}
 	}
 }
@@ -41,8 +40,8 @@ Wheel.prototype.addSegment = function(){
 }
 
 Wheel.prototype.addText = function(){
-		var style = { font: "32px Arial", fill: "#ffffff", wordWrap: true, wordWrapWidth: 1000};
-    	text[i] = game.add.text(0, 0, "													"+number[i], style);
+		var style = { font: "32px Arial", fill: "#ffffff"};
+    	text[i] = game.add.text(0, 0, "													"+prize[i], style);
    		text[i].anchor.set(0, 0.5);
    		wedgeGroup.add(text[i]);
    		text[i].angle = Math.round(startAngle);
@@ -60,6 +59,8 @@ function preload() {
 }
 
 var w = new Wheel(example);
+
+
 function create() {
 	
 	wedgeGroup = game.make.group();
@@ -95,10 +96,10 @@ function create() {
 		tween.to({angle: a}, 5000, Phaser.Easing.Circular.InOut, true, 0);
 		setTimeout(function(){
 			if(imageId[slot]==="wedge_red"){
-			alert( "You win " + number[slot]+" chips!");
+			alert( "You win " + prize[slot]+" chips!");
 			}
 			else{
-				alert( "You win " + number[slot]+" gold chips!");
+				alert( "You win " + prize[slot]+" gold chips!");
 			}
 		},5010);
 	});

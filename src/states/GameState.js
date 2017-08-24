@@ -1,20 +1,18 @@
-window.onload = function () {
-	const game = new Phaser.Game(800, 600, Phaser.CANVAS, 'game', { preload:preload, create:create, update: update });
+class GameState extends Phaser.State {
 
-	function preload() {
-		game.load.image('star1', './assets/images/star1.png');
-		game.load.image('star2', './assets/images/star2.png');
-		game.load.image('jackpot', './assets/images/jackpot.png');
-		game.load.spritesheet('symbol', './assets/images/spritesheet.png', 100, 100, 6);
-		game.load.image('start', './assets/images/start.png');
-		game.load.image('plus','./assets/images/plus.png');
-		game.load.image('minus','./assets/images/minus.png');
+	preload() {
+		let game = this.game;
+		game.load.image('star1', 'assets/images/star1.png');
+		game.load.image('star2', 'assets/images/star2.png');
+		game.load.image('jackpot', 'assets/images/jackpot.png');
+		game.load.spritesheet('symbol', 'assets/images/spritesheet.png', 100, 100, 6);
+		game.load.image('start', 'assets/images/start.png');
+		game.load.image('plus','assets/images/plus.png');
+		game.load.image('minus','assets/images/minus.png');
 	}
 
-	let star1, star2, jackpot, prizes =[], circles = [], signboard, jackpotText, balance, start, stavkaText, plus, minus, slotSymbol = [], balanceText;
-	let text = ['ДЖЕКПОТ', 'Суперставка x100', 'Ставка x10', 'Ставка x5', 'Ставка x3', 'Возврат денег'];
-
-	function create() {
+	create() {
+		let game = this.game;
 		game.stage.backgroundColor = "#3E2723";
 		star1 = game.add.sprite(0, 0, 'star1');
 		star2 = game.add.sprite(0, 0, 'star2');
@@ -106,53 +104,54 @@ window.onload = function () {
 		minus = game.add.button(620, 530, 'minus', stavkaMinus, this);
 	}
 
-	function update() {
-		//
-	}
+}
 
-	function stavkaPlus(){
-		stavkaText.text++;
-	}
+// variables
+let star1, star2, jackpot, prizes =[], circles = [], signboard, jackpotText,
+	balance, start, stavkaText, plus, minus, slotSymbol = [], balanceText, stavka;
+let text = ['ДЖЕКПОТ', 'Суперставка x100', 'Ставка x10', 'Ставка x5', 'Ставка x3', 'Возврат денег'];
 
-	function stavkaMinus(){
-		if (stavkaText.text > 1) {
-			stavkaText.text--;
-		}
-	}
-
-	function gameStart() {
-		if(balanceText.text < 1){
-			return false
-		}
-		balanceText.text -=stavkaText.text;
-		let data = [Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1];
-		for (let i=0; i < 9; i++) {
-			slotSymbol[i].animations.add('symbol');
-			slotSymbol[i].animations.play('symbol', 15+i, true);
-		}
-		setTimeout(function(){
-			for (let i=0; i < 9; i++) {
-				slotSymbol[i].animations.stop();
-			}
-			slotSymbol[1].loadTexture('symbol', data[0]);
-			slotSymbol[4].loadTexture('symbol', data[1]);
-			slotSymbol[7].loadTexture('symbol', data[2]);
-			if(data[0] === data[1] && data[1] === data[2]) {
-				switch (data[0]) {
-					case 0: balanceText.text = parseInt(jackpotText.text)+parseInt(balanceText.text);
-					break;
-					case 1: balanceText.text = 100*parseInt(stavkaText.text)+parseInt(balanceText.text);
-					break;
-					case 2: balanceText.text = 10*parseInt(stavkaText.text)+parseInt(balanceText.text);
-					break;
-					case 3: balanceText.text = 5*parseInt(stavkaText.text)+parseInt(balanceText.text);
-					break;
-					case 4: balanceText.text = 3*parseInt(stavkaText.text)+parseInt(balanceText.text);
-					break;
-					case 5: balanceText.text = parseInt(stavkaText.text)+parseInt(balanceText.text);
-					break;
-				}
-			}
-		}, 1000);
+// functions
+let stavkaPlus = () => stavkaText.text++;
+let stavkaMinus = () => {
+	if (stavkaText.text > 1) {
+		stavkaText.text--;
 	}
 }
+let gameStart = () => {
+	if(balanceText.text < 1){
+		return false
+	}
+	balanceText.text -=stavkaText.text;
+	let data = [Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1, Math.floor(Math.random() * 6) + 1];
+	for (let i=0; i < 9; i++) {
+		slotSymbol[i].animations.add('symbol');
+		slotSymbol[i].animations.play('symbol', 15+i, true);
+	}
+	setTimeout(function(){
+		for (let i=0; i < 9; i++) {
+			slotSymbol[i].animations.stop();
+		}
+		slotSymbol[1].loadTexture('symbol', data[0]);
+		slotSymbol[4].loadTexture('symbol', data[1]);
+		slotSymbol[7].loadTexture('symbol', data[2]);
+		if(data[0] === data[1] && data[1] === data[2]) {
+			switch (data[0]) {
+				case 0: balanceText.text = parseInt(jackpotText.text)+parseInt(balanceText.text);
+				break;
+				case 1: balanceText.text = 100*parseInt(stavkaText.text)+parseInt(balanceText.text);
+				break;
+				case 2: balanceText.text = 10*parseInt(stavkaText.text)+parseInt(balanceText.text);
+				break;
+				case 3: balanceText.text = 5*parseInt(stavkaText.text)+parseInt(balanceText.text);
+				break;
+				case 4: balanceText.text = 3*parseInt(stavkaText.text)+parseInt(balanceText.text);
+				break;
+				case 5: balanceText.text = parseInt(stavkaText.text)+parseInt(balanceText.text);
+				break;
+			}
+		}
+	}, 1000);
+}
+
+export default GameState;

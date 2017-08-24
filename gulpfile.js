@@ -17,9 +17,10 @@ var browserSync = require('browser-sync');
  */
 var PHASER_PATH = './node_modules/phaser/build/';
 var BUILD_PATH = './build';
-var SCRIPTS_PATH = BUILD_PATH + '/scripts';
+var SCRIPTS_PATH = BUILD_PATH + '/assets/scripts';
 var SOURCE_PATH = './src';
-var STATIC_PATH = SOURCE_PATH + '/static';
+var ASSETS_PATH = SOURCE_PATH + '/assets';
+var INDEX_HTML_FILE = './index.html';
 var ENTRY_FILE = SOURCE_PATH + '/index.js';
 var OUTPUT_FILE = 'game.js';
 
@@ -64,7 +65,15 @@ function cleanBuild() {
  * Check out README.md for more info on the '/static' folder.
  */
 function copyStatic() {
-    return gulp.src(STATIC_PATH + '/**/*')
+    return gulp.src(ASSETS_PATH + '/**/*')
+        .pipe(gulp.dest(BUILD_PATH + '/assets'));
+}
+
+/** AB
+ * Copies the content of the index.html into the '/build' folder.
+ */
+function copyIndexHTML() {
+    return gulp.src(INDEX_HTML_FILE)
         .pipe(gulp.dest(BUILD_PATH));
 }
 
@@ -147,7 +156,7 @@ function serve() {
     gulp.watch(SOURCE_PATH + '/**/*.js', ['watch-js']);
     
     // Watches for changes in files inside the './static' folder. Also sets 'keepFiles' to true (see cleanBuild()).
-    gulp.watch(STATIC_PATH + '/**/*', ['watch-static']).on('change', function() {
+    gulp.watch(ASSETS_PATH + '/**/*', ['watch-static']).on('change', function() {
         keepFiles = true;
     });
 
@@ -156,7 +165,8 @@ function serve() {
 
 gulp.task('cleanBuild', cleanBuild);
 gulp.task('copyStatic', ['cleanBuild'], copyStatic);
-gulp.task('copyPhaser', ['copyStatic'], copyPhaser);
+gulp.task('copyIndexHTML', ['copyStatic'], copyIndexHTML); // AB
+gulp.task('copyPhaser', ['copyIndexHTML'], copyPhaser);
 gulp.task('build', ['copyPhaser'], build);
 gulp.task('fastBuild', build);
 gulp.task('serve', ['build'], serve);

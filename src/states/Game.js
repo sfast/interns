@@ -1,5 +1,4 @@
-class GameState extends Phaser.State {
-
+export default class GameState extends Phaser.State {
 	preload() {
 		let game = this.game;
 		game.load.image('star1', 'assets/images/star1.png');
@@ -153,5 +152,3 @@ let gameStart = () => {
 		}
 	}, 1000);
 }
-
-export default GameState;

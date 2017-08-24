@@ -1,13 +1,6 @@
-import GameState from 'states/GameState';
+import 'p2';
+import 'pixi';
+import 'phaser';
+import App from './app';
 
-class Game extends Phaser.Game {
-
-	constructor() {
-		super(800, 600, Phaser.AUTO, 'content', null);
-		this.state.add('GameState', GameState, false);
-		this.state.start('GameState');
-	}
-
-}
-
-new Game();
+new App();

@@ -1,10 +1,10 @@
 import States from './states';
 
-export default class App extends Phaser.Game {
+export default class App {
     constructor() {
-        super(800, 600, Phaser.AUTO, 'content', null);
+        this.game = new Phaser.Game(800, 600, Phaser.AUTO, 'content', this);
 
-        this.state.add('GameState', States.Game, false);
-        this.state.start('GameState');
+        this.game.state.add('GameState', new States.Game(this));
+        this.game.state.start('GameState');
     }
 }

@@ -1,4 +1,9 @@
-export default class GameState extends Phaser.State {
+export default class GameState {
+    constructor(app) {
+        this.app = app;
+        this.game = app.game;
+    }
+
 	preload() {
 		let game = this.game;
 		game.load.image('star1', 'assets/images/star1.png');
@@ -12,9 +17,16 @@ export default class GameState extends Phaser.State {
 
 	create() {
 		let game = this.game;
+
+		let group = game.add.group();
+
+        group.inputEnableChildren = true;
+
 		game.stage.backgroundColor = "#3E2723";
+
 		star1 = game.add.sprite(0, 0, 'star1');
 		star2 = game.add.sprite(0, 0, 'star2');
+
 		star2.x = game.width-star2.width;
 		jackpot = game.add.sprite(0, 10, 'jackpot');
 		jackpot.x = game.width/2-jackpot.width/2;

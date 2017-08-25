@@ -1,6 +1,5 @@
 var path = require('path')
 var webpack = require('webpack')
-var BrowserSyncPlugin = require('browser-sync-webpack-plugin')
 
 // Phaser webpack config
 var phaserModule = path.join(__dirname, '/node_modules/phaser-ce/')
@@ -9,7 +8,7 @@ var pixi = path.join(phaserModule, 'build/custom/pixi.js')
 var p2 = path.join(phaserModule, 'build/custom/p2.js')
 
 var definePlugin = new webpack.DefinePlugin({
-  __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || 'true'))
+  __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || 'false'))
 })
 
 module.exports = {
@@ -19,25 +18,24 @@ module.exports = {
       path.resolve(__dirname, 'src/index.js')
     ],
     vendor: ['pixi', 'p2', 'phaser', 'webfontloader']
+
   },
-  devtool: 'cheap-source-map',
   output: {
-    pathinfo: true,
     path: path.resolve(__dirname, 'dist'),
     publicPath: './dist/',
     filename: 'bundle.js'
   },
-  watch: true,
   plugins: [
     definePlugin,
-    new webpack.optimize.CommonsChunkPlugin({ name: 'vendor'/* chunkName= */, filename: 'vendor.bundle.js'/* filename= */}),
-    new BrowserSyncPlugin({
-      host: process.env.IP || 'localhost',
-      port: process.env.PORT || 3000,
-      server: {
-        baseDir: ['./', './build']
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new webpack.optimize.UglifyJsPlugin({
+      drop_console: true,
+      minimize: true,
+      output: {
+        comments: false
       }
-    })
+    }),
+    new webpack.optimize.CommonsChunkPlugin({ name: 'vendor'/* chunkName= */, filename: 'vendor.bundle.js'/* filename= */})
   ],
   module: {
     rules: [
